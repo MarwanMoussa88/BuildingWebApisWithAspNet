@@ -1,9 +1,12 @@
+using Asp.Versioning.ApiExplorer;
 using BuildingWebApisWithAspNet.Extensions;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.RegisterServices();
+
 
 builder.Services.AddCors(options =>
 {
@@ -22,13 +25,25 @@ builder.Services.AddCors(options =>
         policy.AllowAnyMethod();
     });
 });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Configuration.GetValue<bool>("UseSwagger"))
 {
+    var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        foreach (var description in provider.ApiVersionDescriptions)
+        {
+            options.SwaggerEndpoint(
+                $"/swagger/{description.GroupName}/swagger.json",
+                $"MyBgList {description.ApiVersion}"
+            );
+        }
+    });
 }
 
 if (app.Configuration.GetValue<bool?>("UseDeveloperExceptionPage") ?? false)

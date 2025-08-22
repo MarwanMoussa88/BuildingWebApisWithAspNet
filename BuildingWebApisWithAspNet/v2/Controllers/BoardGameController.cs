@@ -1,10 +1,11 @@
-﻿using BuildingWebApisWithAspNet.Models;
-using Microsoft.AspNetCore.Http;
+﻿using Asp.Versioning;
+using BuildingWebApisWithAspNet.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BuildingWebApisWithAspNet.Controllers
+namespace BuildingWebApisWithAspNet.V2.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:ApiVersion}/[controller]")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class BoardGameController : ControllerBase
     {
@@ -21,9 +22,12 @@ namespace BuildingWebApisWithAspNet.Controllers
         {
             return new RestDTO<List<BoardGame>>()
             {
-                Data = new List<BoardGame>
+                Items = new List<BoardGame>
                 {
                     new BoardGame()
+                    {
+                        Name = "Version 2"
+                    }
                 },
                 Links = new List<LinkDTO>()
                 {

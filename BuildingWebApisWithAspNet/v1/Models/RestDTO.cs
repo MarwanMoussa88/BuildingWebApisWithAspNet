@@ -1,4 +1,4 @@
-﻿namespace BuildingWebApisWithAspNet.Models
+﻿namespace BuildingWebApisWithAspNet.V1.Models
 {
     public record RestDTO<T>
     {

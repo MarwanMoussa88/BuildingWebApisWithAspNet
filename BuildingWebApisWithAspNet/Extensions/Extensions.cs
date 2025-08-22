@@ -1,4 +1,6 @@
-﻿using BuildingWebApisWithAspNet.Middlewares;
+﻿using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
+using BuildingWebApisWithAspNet.Middlewares;
 
 namespace BuildingWebApisWithAspNet.Extensions
 {
@@ -12,7 +14,8 @@ namespace BuildingWebApisWithAspNet.Extensions
                 return new { id = 1, name = "marwan" };
             }).RequireCors("AnyOrigion");
 
-            endpointRouteBuilder.MapGet("error" ,()=>{
+            endpointRouteBuilder.MapGet("error", () =>
+            {
                 return Results.Problem();
             }).RequireCors("AnyOrigion");
 
@@ -48,8 +51,35 @@ namespace BuildingWebApisWithAspNet.Extensions
             services.AddTransient<SampleMiddleware>();
             services.AddAuthentication();
             services.AddAuthorization();
-            services.AddSwaggerGen();
             services.AddControllers();
+            services.AddApiVersioning(options =>
+            {
+                options.ApiVersionReader = new UrlSegmentApiVersionReader();
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.ReportApiVersions = true;
+            }).AddApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'VVV";
+                options.SubstituteApiVersionInUrl = true;
+            });
+
+            services.AddSwaggerGen(options =>
+            {
+                var provider = services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
+
+                foreach(var version in provider.ApiVersionDescriptions)
+                {
+                    options.SwaggerDoc(version.GroupName, new Microsoft.OpenApi.Models.OpenApiInfo
+                    {
+                        Title = $"MyBgList {version.ApiVersion}",
+                        Version = version.ApiVersion.ToString()
+                    });
+                }
+            });
+
+
+
             return services;
         }
 
