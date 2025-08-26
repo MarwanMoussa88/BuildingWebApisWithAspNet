@@ -1,4 +1,6 @@
+using BuildingWebApisWithAspNet.DbContexts;
 using BuildingWebApisWithAspNet.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,12 @@ builder.Services.AddCors(options =>
         policy.AllowAnyHeader();
         policy.AllowAnyMethod();
     });
+});
+
+builder.Services.AddDbContext<MyBgListContext>((options) =>
+{
+    var connString = builder.Configuration.GetConnectionString("MyBgList");
+    options.UseSqlServer(connString);
 });
 var app = builder.Build();
 

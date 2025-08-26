@@ -1,4 +1,5 @@
-﻿using BuildingWebApisWithAspNet.Middlewares;
+﻿using BuildingWebApisWithAspNet.Appsettings;
+using BuildingWebApisWithAspNet.Middlewares;
 
 namespace BuildingWebApisWithAspNet.Extensions
 {
@@ -12,7 +13,8 @@ namespace BuildingWebApisWithAspNet.Extensions
                 return new { id = 1, name = "marwan" };
             }).RequireCors("AnyOrigion");
 
-            endpointRouteBuilder.MapGet("error" ,()=>{
+            endpointRouteBuilder.MapGet("error", () =>
+            {
                 return Results.Problem();
             }).RequireCors("AnyOrigion");
 
@@ -50,6 +52,8 @@ namespace BuildingWebApisWithAspNet.Extensions
             services.AddAuthorization();
             services.AddSwaggerGen();
             services.AddControllers();
+            services.AddOptions<AppSettingsOptions>(AppSettingsOptions.Options)
+                .ValidateOnStart();
             return services;
         }
 
