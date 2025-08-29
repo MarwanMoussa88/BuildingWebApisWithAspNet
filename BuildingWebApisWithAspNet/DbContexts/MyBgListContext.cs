@@ -6,7 +6,7 @@ namespace BuildingWebApisWithAspNet.DbContexts
     public class MyBgListContext : DbContext
     {
         public DbSet<BoardGame> BoardGames => Set<BoardGame>();
-        public DbSet<Mechanic> Mechanic => Set<Mechanic>();
+        public DbSet<Mechanic> Mechanics => Set<Mechanic>();
         public DbSet<Domain> Domains => Set<Domain>();
         public DbSet<BoardGameDomain> BoardGameDomains => Set<BoardGameDomain>();
         public DbSet<BoardGameMechanic> BoardGameMechanics => Set<BoardGameMechanic>();
@@ -66,8 +66,7 @@ namespace BuildingWebApisWithAspNet.DbContexts
             modelBuilder.Entity<Publisher>()
                         .HasMany(c => c.BoardGames)
                         .WithOne(c => c.Publisher)
-                        .HasForeignKey(c => c.PublisherId)
-                        .IsRequired();
+                        .HasForeignKey(c => c.PublisherId);
 
             modelBuilder.Entity<BoardGame>()
                         .HasMany(c => c.BoardGameCategories)

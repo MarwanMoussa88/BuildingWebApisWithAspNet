@@ -47,8 +47,8 @@ namespace BuildingWebApisWithAspNet.Entities
         [Required]
         public int Flags { get; set; }
 
-        [Required]
-        public int PublisherId { get; set; }
+        
+        public int? PublisherId { get; set; }
         public Publisher Publisher { get; set; }
 
         public ICollection<BoardGameMechanic> BoardGameMechanics { get; set; }

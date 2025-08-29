@@ -1,5 +1,6 @@
 ﻿using BuildingWebApisWithAspNet.Appsettings;
 using BuildingWebApisWithAspNet.Middlewares;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuildingWebApisWithAspNet.Extensions
 {
@@ -51,10 +52,35 @@ namespace BuildingWebApisWithAspNet.Extensions
             services.AddAuthentication();
             services.AddAuthorization();
             services.AddSwaggerGen();
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.ModelBindingMessageProvider.SetValueIsInvalidAccessor(
+                (x) => $"The value '{x}' is invalid.");
+                options.ModelBindingMessageProvider.SetValueMustBeANumberAccessor(
+                (x) => $"The field {x} must be a number.");
+                options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor(
+                (x, y) => $"The value '{x}' is not valid for {y}.");
+                options.ModelBindingMessageProvider.SetMissingKeyOrValueAccessor(
+                () => $"A value is required.");
+            });
+
             services.AddOptions<AppSettingsOptions>(AppSettingsOptions.Options)
                 .ValidateOnStart();
             return services;
+        }
+
+        public static IQueryable<T> OrderByColumn<T>(this IQueryable<T> query, string columnName, bool isDescending = false) where T : class
+        {
+            Type type = typeof(T);
+            var propertyNames = new HashSet<string>(type.GetProperties().Select(c => c.Name));
+
+            if (!propertyNames.Contains(columnName.ToLower()))
+                columnName = type.GetProperties()[0].Name;
+
+            if (isDescending)
+                return query.OrderByDescending(c => EF.Property<T>(c, columnName));
+            else
+                return query.OrderBy(keySelector: c => EF.Property<T>(c, columnName));
         }
 
     }
